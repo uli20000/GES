@@ -6,51 +6,64 @@
     <title>GES 成績達成計算器</title>
     <style>
         :root {
-            --primary-color: #4a90e2;
-            --bg-color: #f0f2f5;
-            --card-bg: #ffffff;
-            --text-color: #333;
+            --primary: #4a90e2;
+            --secondary: #67c23a;
+            --bg: #f5f7fa;
+            --card: #ffffff;
         }
         body { 
-            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif; 
-            background-color: var(--bg-color); 
+            font-family: 'PingFang TC', sans-serif; 
+            background-color: var(--bg); 
             display: flex; justify-content: center; align-items: center; 
-            min-height: 100vh; margin: 0; color: var(--text-color);
+            min-height: 100vh; margin: 0; 
         }
         .container { 
-            width: 90%; max-width: 500px; background: var(--card-bg); 
-            padding: 30px; border-radius: 20px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            width: 92%; max-width: 450px; background: var(--card); 
+            padding: 25px; border-radius: 24px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08); 
         }
-        h2 { text-align: center; color: var(--primary-color); margin-bottom: 25px; font-size: 24px; }
-        .section-title { font-size: 18px; font-weight: bold; border-left: 4px solid var(--primary-color); padding-left: 10px; margin: 20px 0 15px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 8px; font-size: 14px; color: #666; }
+        h2 { text-align: center; color: var(--primary); margin-bottom: 20px; letter-spacing: 1px; }
+        
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; color: #444; font-size: 15px; }
+        
         select, input { 
-            width: 100%; padding: 12px; border: 1.5px solid #ddd; 
-            border-radius: 10px; font-size: 16px; transition: 0.3s; box-sizing: border-box;
+            width: 100%; padding: 14px; border: 1.5px solid #eee; 
+            border-radius: 12px; font-size: 16px; box-sizing: border-box;
+            background-color: #fcfcfc; transition: all 0.3s ease;
         }
-        input:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 8px rgba(74,144,226,0.2); }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        input:focus { border-color: var(--primary); outline: none; background-color: #fff; }
+
+        .score-grid { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; 
+            background: #f9f9f9; padding: 15px; border-radius: 16px; margin-bottom: 20px;
+        }
+
         button { 
-            width: 100%; padding: 15px; background: linear-gradient(135deg, #6ab0ff, #4a90e2); 
-            color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: bold; 
-            cursor: pointer; margin-top: 20px; box-shadow: 0 4px 15px rgba(74,144,226,0.3); transition: 0.3s;
+            width: 100%; padding: 16px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white; border: none; border-radius: 14px; font-size: 18px; font-weight: bold; 
+            cursor: pointer; transition: transform 0.2s; box-shadow: 0 5px 15px rgba(79,172,254,0.4);
         }
-        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(74,144,226,0.4); }
+        button:active { transform: scale(0.98); }
+
         .result-box { 
-            margin-top: 25px; padding: 20px; border-radius: 15px; 
-            background: #f8fbff; border: 1px solid #e1e9f5; display: none;
+            margin-top: 25px; border-radius: 16px; display: none; overflow: hidden;
+            border: 1px solid #edf2f7;
         }
-        .res-item { margin-bottom: 10px; line-height: 1.6; }
-        .highlight { color: #e74c3c; font-weight: bold; font-size: 1.2em; }
-        .pass { color: #27ae60; font-weight: bold; }
+        .res-header { background: #f8fafc; padding: 10px; text-align: center; font-size: 14px; color: #64748b; border-bottom: 1px solid #edf2f7; }
+        .res-body { padding: 15px; }
+        .res-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; }
+        .tag { padding: 4px 10px; border-radius: 8px; font-weight: bold; font-size: 14px; }
+        .tag-osat { background: #e1effe; color: #1e429f; }
+        .tag-sos { background: #e1f5fe; color: #0277bd; }
+        .gap-num { color: #e74c3c; font-size: 1.2em; font-weight: bold; }
+        .pass-text { color: var(--secondary); font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>GES 成績達成計算器</h2>
+    <h2>GES 計算器</h2>
     
     <div class="form-group">
         <label>區經理</label>
@@ -63,90 +76,79 @@
         </select>
     </div>
 
-    <div class="section-title">OSAT 數據</div>
-    <div class="grid">
-        <div class="form-group">
-            <label>目前份數</label>
-            <input type="number" id="osatCount" placeholder="份數">
+    <div class="form-group">
+        <label>共用總份數 (n)</label>
+        <input type="number" id="totalCount" placeholder="請輸入目前總份數">
+    </div>
+
+    <div class="score-grid">
+        <div class="form-group" style="margin-bottom:0">
+            <label>OSAT 成績 %</label>
+            <input type="number" id="osatScore" step="0.1" placeholder="例如 75">
         </div>
-        <div class="form-group">
-            <label>目前成績 (%)</label>
-            <input type="number" id="osatScore" step="0.1" placeholder="成績">
+        <div class="form-group" style="margin-bottom:0">
+            <label>SOS 成績 %</label>
+            <input type="number" id="sosScore" step="0.1" placeholder="例如 78">
         </div>
     </div>
 
-    <div class="section-title">SOS 數據</div>
-    <div class="grid">
-        <div class="form-group">
-            <label>目前份數</label>
-            <input type="number" id="sosCount" placeholder="份數">
-        </div>
-        <div class="form-group">
-            <label>目前成績 (%)</label>
-            <input type="number" id="sosScore" step="0.1" placeholder="成績">
-        </div>
-    </div>
-
-    <button onclick="calculate()">立即計算缺口</button>
+    <button onclick="calculate()">開始計算</button>
 
     <div id="resultBox" class="result-box">
-        <div id="osatResult" class="res-item"></div>
-        <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
-        <div id="sosResult" class="res-item"></div>
+        <div class="res-header" id="resManager"></div>
+        <div class="res-body">
+            <div class="res-row">
+                <span class="tag tag-osat">OSAT</span>
+                <span id="osatVal"></span>
+            </div>
+            <div class="res-row">
+                <span class="tag tag-sos">SOS</span>
+                <span id="sosVal"></span>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    // 頁面載入時，讀取上次儲存的數據
     window.onload = function() {
-        const savedData = JSON.parse(localStorage.getItem('gesLastSearch'));
-        if (savedData) {
-            document.getElementById('manager').value = savedData.manager;
-            document.getElementById('osatCount').value = savedData.osatCount;
-            document.getElementById('osatScore').value = savedData.osatScore;
-            document.getElementById('sosCount').value = savedData.sosCount;
-            document.getElementById('sosScore').value = savedData.sosScore;
-            calculate(); // 自動計算上次結果
+        const saved = JSON.parse(localStorage.getItem('gesDataV3'));
+        if (saved) {
+            document.getElementById('manager').value = saved.manager;
+            document.getElementById('totalCount').value = saved.count;
+            document.getElementById('osatScore').value = saved.osat;
+            document.getElementById('sosScore').value = saved.sos;
+            calculate();
         }
     };
 
-    function getGap(n, S, T) {
-        if (isNaN(n) || isNaN(S)) return null;
-        if (S >= T) return 0;
-        return Math.ceil((n * (T - S)) / (100 - T));
-    }
-
     function calculate() {
-        const data = {
-            manager: document.getElementById('manager').value,
-            osatCount: parseFloat(document.getElementById('osatCount').value),
-            osatScore: parseFloat(document.getElementById('osatScore').value),
-            sosCount: parseFloat(document.getElementById('sosCount').value),
-            sosScore: parseFloat(document.getElementById('sosScore').value)
-        };
-
-        // 儲存到本地紀錄
-        localStorage.setItem('gesLastSearch', JSON.stringify(data));
-
+        const manager = document.getElementById('manager').value;
+        const n = parseFloat(document.getElementById('totalCount').value);
+        const sOsat = parseFloat(document.getElementById('osatScore').value);
+        const sSos = parseFloat(document.getElementById('sosScore').value);
         const T = 81;
-        const osatGap = getGap(data.osatCount, data.osatScore, T);
-        const sosGap = getGap(data.sosCount, data.sosScore, T);
 
+        if (isNaN(n)) { alert("請輸入份數"); return; }
+
+        localStorage.setItem('gesDataV3', JSON.stringify({manager, count: n, osat: sOsat, sos: sSos}));
+
+        document.getElementById('resManager').innerText = `經理：${manager} (目前 ${n} 份)`;
         document.getElementById('resultBox').style.display = "block";
 
-        // OSAT 顯示
-        let osatHtml = `<strong>【OSAT】</strong> `;
-        if (osatGap === null) osatHtml += "未輸入數據";
-        else if (osatGap === 0) osatHtml += `<span class="pass">已達標 (81%↑)</span>`;
-        else osatHtml += `還差 <span class="highlight">${osatGap}</span> 份滿分問卷`;
-        document.getElementById('osatResult').innerHTML = osatHtml;
+        showResult('osatVal', n, sOsat, T);
+        showResult('sosVal', n, sSos, T);
+    }
 
-        // SOS 顯示
-        let sosHtml = `<strong>【SOS】</strong> `;
-        if (sosGap === null) sosHtml += "未輸入數據";
-        else if (sosGap === 0) sosHtml += `<span class="pass">已達標 (81%↑)</span>`;
-        else sosHtml += `還差 <span class="highlight">${sosGap}</span> 份滿分問卷`;
-        document.getElementById('sosResult').innerHTML = sosHtml;
+    function showResult(elementId, n, S, T) {
+        const el = document.getElementById(elementId);
+        if (isNaN(S)) { el.innerHTML = "未輸入"; return; }
+        
+        if (S >= T) {
+            el.innerHTML = `<span class="pass-text">已達標 ✓</span>`;
+        } else {
+            const gap = Math.ceil((n * (T - S)) / (100 - T));
+            el.innerHTML = `還差 <span class="gap-num">${gap}</span> 份滿分`;
+        }
     }
 </script>
 
