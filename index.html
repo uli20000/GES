@@ -3,70 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GES 成績達成計算器</title>
+    <title>GES Performance Pro</title>
     <style>
         :root {
-            --primary: #4a90e2;
-            --secondary: #67c23a;
-            --bg: #f5f7fa;
-            --card: #ffffff;
+            --primary: #2563eb;
+            --accent: #3b82f6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg: #0f172a;
+            --card: rgba(255, 255, 255, 0.95);
         }
+        
         body { 
-            font-family: 'PingFang TC', sans-serif; 
-            background-color: var(--bg); 
+            font-family: 'Inter', 'PingFang TC', sans-serif; 
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             display: flex; justify-content: center; align-items: center; 
-            min-height: 100vh; margin: 0; 
+            min-height: 100vh; margin: 0; color: #1e293b;
         }
+
         .container { 
-            width: 92%; max-width: 450px; background: var(--card); 
-            padding: 25px; border-radius: 24px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.08); 
+            width: 90%; max-width: 420px; background: var(--card); 
+            padding: 30px; border-radius: 28px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
         }
-        h2 { text-align: center; color: var(--primary); margin-bottom: 20px; letter-spacing: 1px; }
+
+        h2 { text-align: center; color: var(--bg); margin-bottom: 25px; font-weight: 800; font-size: 1.5rem; letter-spacing: -0.5px; }
         
         .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 6px; font-weight: 600; color: #444; font-size: 15px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #64748b; font-size: 13px; text-transform: uppercase; }
         
         select, input { 
-            width: 100%; padding: 14px; border: 1.5px solid #eee; 
-            border-radius: 12px; font-size: 16px; box-sizing: border-box;
-            background-color: #fcfcfc; transition: all 0.3s ease;
+            width: 100%; padding: 14px; border: 2px solid #e2e8f0; 
+            border-radius: 14px; font-size: 16px; box-sizing: border-box;
+            background-color: #fff; transition: all 0.2s ease;
         }
-        input:focus { border-color: var(--primary); outline: none; background-color: #fff; }
+        input:focus, select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
 
         .score-grid { 
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; 
-            background: #f9f9f9; padding: 15px; border-radius: 16px; margin-bottom: 20px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 16px; 
+            background: #f8fafc; padding: 18px; border-radius: 20px; margin-bottom: 24px;
         }
 
         button { 
-            width: 100%; padding: 16px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white; border: none; border-radius: 14px; font-size: 18px; font-weight: bold; 
-            cursor: pointer; transition: transform 0.2s; box-shadow: 0 5px 15px rgba(79,172,254,0.4);
+            width: 100%; padding: 16px; background: #2563eb;
+            color: white; border: none; border-radius: 16px; font-size: 16px; font-weight: 700; 
+            cursor: pointer; transition: all 0.3s;
         }
-        button:active { transform: scale(0.98); }
+        button:hover { background: #1d4ed8; transform: translateY(-1px); }
+        button:active { transform: translateY(0); }
 
         .result-box { 
-            margin-top: 25px; border-radius: 16px; display: none; overflow: hidden;
-            border: 1px solid #edf2f7;
+            margin-top: 25px; border-radius: 20px; display: none; 
+            background: #ffffff; border: 1px solid #f1f5f9; padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
-        .res-header { background: #f8fafc; padding: 10px; text-align: center; font-size: 14px; color: #64748b; border-bottom: 1px solid #edf2f7; }
-        .res-body { padding: 15px; }
-        .res-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; }
-        .tag { padding: 4px 10px; border-radius: 8px; font-weight: bold; font-size: 14px; }
-        .tag-osat { background: #e1effe; color: #1e429f; }
-        .tag-sos { background: #e1f5fe; color: #0277bd; }
-        .gap-num { color: #e74c3c; font-size: 1.2em; font-weight: bold; }
-        .pass-text { color: var(--secondary); font-weight: bold; }
+        .res-title { font-size: 12px; color: #94a3b8; margin-bottom: 12px; text-align: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; }
+        .res-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
+        .tag { padding: 5px 12px; border-radius: 10px; font-weight: 700; font-size: 12px; letter-spacing: 0.5px; }
+        .tag-osat { background: #dbeafe; color: #1e40af; }
+        .tag-sos { background: #fef3c7; color: #92400e; }
+        .gap-num { color: var(--danger); font-size: 1.1em; font-weight: 800; }
+        .pass-text { color: var(--success); font-weight: 700; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>GES 成績</h2>
+    <h2>GES Performance</h2>
     
     <div class="form-group">
-        <label> AC </label>
+        <label>Manager (AC)</label>
         <select id="manager">
             <option value="Renee">Renee</option>
             <option value="Ean">Ean</option>
@@ -77,81 +84,73 @@
     </div>
 
     <div class="form-group">
-        <label> 總份數 </label>
-        <input type="number" id="totalCount" placeholder="目前總份數">
+        <label>Total Survey Count</label>
+        <input type="number" id="totalCount" placeholder="0" inputmode="numeric">
     </div>
 
     <div class="score-grid">
         <div class="form-group" style="margin-bottom:0">
-            <label>OSAT</label>
-            <input type="number" id="osatScore" step="0.1" placeholder="...">
+            <label>OSAT %</label>
+            <input type="number" id="osatScore" step="0.1" placeholder="0.0">
         </div>
         <div class="form-group" style="margin-bottom:0">
-            <label>SOS</label>
-            <input type="number" id="sosScore" step="0.1" placeholder="...">
+            <label>SOS %</label>
+            <input type="number" id="sosScore" step="0.1" placeholder="0.0">
         </div>
     </div>
 
-    <button onclick="calculate()">開始計算</button>
+    <button onclick="calculate()">Calculate Deficit</button>
 
     <div id="resultBox" class="result-box">
-        <div class="res-header" id="resManager"></div>
-        <div class="res-body">
-            <div class="res-row">
-                <span class="tag tag-osat">OSAT</span>
-                <span id="osatVal"></span>
-            </div>
-            <div class="res-row">
-                <span class="tag tag-sos">SOS</span>
-                <span id="sosVal"></span>
-            </div>
+        <div class="res-title" id="resHeader"></div>
+        <div class="res-row">
+            <span class="tag tag-osat">OSAT</span>
+            <span id="osatVal"></span>
+        </div>
+        <div class="res-row">
+            <span class="tag tag-sos">SOS</span>
+            <span id="sosVal"></span>
         </div>
     </div>
 </div>
 
 <script>
-    window.onload = function() {
-        const saved = JSON.parse(localStorage.getItem('gesDataV3'));
-        if (saved) {
-            document.getElementById('manager').value = saved.manager;
-            document.getElementById('totalCount').value = saved.count;
-            document.getElementById('osatScore').value = saved.osat;
-            document.getElementById('sosScore').value = saved.sos;
-            calculate();
-        }
-    };
+    // 移除了 window.onload 讀取 localStorage 的部分，達到重整即清空的效果
 
     function calculate() {
         const manager = document.getElementById('manager').value;
         const n = parseFloat(document.getElementById('totalCount').value);
         const sOsat = parseFloat(document.getElementById('osatScore').value);
         const sSos = parseFloat(document.getElementById('sosScore').value);
-        const T = 81;
+        const target = 81; // 維持 81% 目標
 
-        if (isNaN(n)) { alert("請輸入份數"); return; }
+        if (isNaN(n) || n <= 0) {
+            alert("請輸入有效的總份數");
+            return;
+        }
 
-        localStorage.setItem('gesDataV3', JSON.stringify({manager, count: n, osat: sOsat, sos: sSos}));
-
-        document.getElementById('resManager').innerText = `經理：${manager} (目前 ${n} 份)`;
+        document.getElementById('resHeader').innerText = `${manager} · Target 81%`;
         document.getElementById('resultBox').style.display = "block";
 
-        showResult('osatVal', n, sOsat, T);
-        showResult('sosVal', n, sSos, T);
+        updateRow('osatVal', n, sOsat, target);
+        updateRow('sosVal', n, sSos, target);
     }
 
-    function showResult(elementId, n, S, T) {
+    function updateRow(elementId, n, score, target) {
         const el = document.getElementById(elementId);
-        if (isNaN(S)) { el.innerHTML = "未輸入"; return; }
+        if (isNaN(score)) {
+            el.innerHTML = "<span style='color:#cbd5e1'>No Data</span>";
+            return;
+        }
         
-        if (S >= T) {
-            el.innerHTML = `<span class="pass-text">已達標 ✓</span>`;
+        if (score >= target) {
+            el.innerHTML = `<span class="pass-text">Reached ✓</span>`;
         } else {
-            const gap = Math.ceil((n * (T - S)) / (100 - T));
-            el.innerHTML = `還差 <span class="gap-num">${gap}</span> 份滿分`;
+            const gap = Math.ceil((n * (target - score)) / (100 - target));
+            el.innerHTML = `Need <span class="gap-num">+${gap}</span> (100%)`;
         }
     }
 </script>
 
 </body>
 </html>
-
