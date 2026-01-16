@@ -3,91 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>成績達成計算器</title>
+    <title>GES 成績達成計算器</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; background-color: #f4f7f6; }
-        .card { max-width: 400px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        h2 { color: #333; text-align: center; }
+        :root {
+            --primary-color: #4a90e2;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-color: #333;
+        }
+        body { 
+            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif; 
+            background-color: var(--bg-color); 
+            display: flex; justify-content: center; align-items: center; 
+            min-height: 100vh; margin: 0; color: var(--text-color);
+        }
+        .container { 
+            width: 90%; max-width: 500px; background: var(--card-bg); 
+            padding: 30px; border-radius: 20px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+        }
+        h2 { text-align: center; color: var(--primary-color); margin-bottom: 25px; font-size: 24px; }
+        .section-title { font-size: 18px; font-weight: bold; border-left: 4px solid var(--primary-color); padding-left: 10px; margin: 20px 0 15px; }
         .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        select, input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; }
-        button:hover { background-color: #0056b3; }
-        #result { margin-top: 20px; padding: 15px; border-radius: 6px; display: none; }
-        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .info { background-color: #e2e3e5; color: #383d41; }
+        label { display: block; margin-bottom: 8px; font-size: 14px; color: #666; }
+        select, input { 
+            width: 100%; padding: 12px; border: 1.5px solid #ddd; 
+            border-radius: 10px; font-size: 16px; transition: 0.3s; box-sizing: border-box;
+        }
+        input:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 8px rgba(74,144,226,0.2); }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        button { 
+            width: 100%; padding: 15px; background: linear-gradient(135deg, #6ab0ff, #4a90e2); 
+            color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: bold; 
+            cursor: pointer; margin-top: 20px; box-shadow: 0 4px 15px rgba(74,144,226,0.3); transition: 0.3s;
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(74,144,226,0.4); }
+        .result-box { 
+            margin-top: 25px; padding: 20px; border-radius: 15px; 
+            background: #f8fbff; border: 1px solid #e1e9f5; display: none;
+        }
+        .res-item { margin-bottom: 10px; line-height: 1.6; }
+        .highlight { color: #e74c3c; font-weight: bold; font-size: 1.2em; }
+        .pass { color: #27ae60; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>問卷成績計算器</h2>
+<div class="container">
+    <h2>GES 成績達成計算器</h2>
     
     <div class="form-group">
         <label>區經理</label>
         <select id="manager">
-            <option value="Manager A">Renee</option>
-            <option value="Manager B">Ean</option>
-            <option value="Manager C">Carol</option>
-            <option value="Manager D">Chance</option>
-            <option value="Manager E">Jewel</option>
+            <option value="Renee">Renee</option>
+            <option value="Ean">Ean</option>
+            <option value="Carol">Carol</option>
+            <option value="Chance">Chance</option>
+            <option value="Jewel">Jewel</option>
         </select>
     </div>
 
-    <div class="form-group">
-        <label>考核指標</label>
-        <select id="metric">
-            <option value="OSAT">OSAT</option>
-            <option value="SOS">SOS</option>
-        </select>
+    <div class="section-title">OSAT 數據</div>
+    <div class="grid">
+        <div class="form-group">
+            <label>目前份數</label>
+            <input type="number" id="osatCount" placeholder="份數">
+        </div>
+        <div class="form-group">
+            <label>目前成績 (%)</label>
+            <input type="number" id="osatScore" step="0.1" placeholder="成績">
+        </div>
     </div>
 
-    <div class="form-group">
-        <label>目前總份數</label>
-        <input type="number" id="currentCount" placeholder="例如: 50" min="1">
+    <div class="section-title">SOS 數據</div>
+    <div class="grid">
+        <div class="form-group">
+            <label>目前份數</label>
+            <input type="number" id="sosCount" placeholder="份數">
+        </div>
+        <div class="form-group">
+            <label>目前成績 (%)</label>
+            <input type="number" id="sosScore" step="0.1" placeholder="成績">
+        </div>
     </div>
 
-    <div class="form-group">
-        <label>目前成績 (%)</label>
-        <input type="number" id="currentScore" placeholder="例如: 75" step="0.1" min="0" max="100">
+    <button onclick="calculate()">立即計算缺口</button>
+
+    <div id="resultBox" class="result-box">
+        <div id="osatResult" class="res-item"></div>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
+        <div id="sosResult" class="res-item"></div>
     </div>
-
-    <button onclick="calculate()">計算缺口</button>
-
-    <div id="result"></div>
 </div>
 
 <script>
+    // 頁面載入時，讀取上次儲存的數據
+    window.onload = function() {
+        const savedData = JSON.parse(localStorage.getItem('gesLastSearch'));
+        if (savedData) {
+            document.getElementById('manager').value = savedData.manager;
+            document.getElementById('osatCount').value = savedData.osatCount;
+            document.getElementById('osatScore').value = savedData.osatScore;
+            document.getElementById('sosCount').value = savedData.sosCount;
+            document.getElementById('sosScore').value = savedData.sosScore;
+            calculate(); // 自動計算上次結果
+        }
+    };
+
+    function getGap(n, S, T) {
+        if (isNaN(n) || isNaN(S)) return null;
+        if (S >= T) return 0;
+        return Math.ceil((n * (T - S)) / (100 - T));
+    }
+
     function calculate() {
-        const n = parseFloat(document.getElementById('currentCount').value);
-        const S = parseFloat(document.getElementById('currentScore').value);
-        const T = 81; // 目標成績
-        const resultDiv = document.getElementById('result');
-        const manager = document.getElementById('manager').value;
-        const metric = document.getElementById('metric').value;
+        const data = {
+            manager: document.getElementById('manager').value,
+            osatCount: parseFloat(document.getElementById('osatCount').value),
+            osatScore: parseFloat(document.getElementById('osatScore').value),
+            sosCount: parseFloat(document.getElementById('sosCount').value),
+            sosScore: parseFloat(document.getElementById('sosScore').value)
+        };
 
-        if (isNaN(n) || isNaN(S)) {
-            alert("請輸入正確的份數與成績");
-            return;
-        }
+        // 儲存到本地紀錄
+        localStorage.setItem('gesLastSearch', JSON.stringify(data));
 
-        resultDiv.style.display = "block";
-        
-        if (S >= T) {
-            resultDiv.className = "success";
-            resultDiv.innerHTML = `<strong>${manager}</strong> 的 ${metric} 成績已達標！目前平均為 ${S}%。`;
-        } else {
-            // 計算公式: x = n * (T - S) / (100 - T)
-            const gap = Math.ceil((n * (T - S)) / (100 - T));
-            resultDiv.className = "info";
-            resultDiv.innerHTML = `
-                <strong>${manager}</strong> 目前 ${metric}: ${S}% (${n}份)<br>
-                還需要增加 <strong>${gap}</strong> 份 <strong>100%</strong> 的問卷才能達到 81%。
-            `;
-        }
+        const T = 81;
+        const osatGap = getGap(data.osatCount, data.osatScore, T);
+        const sosGap = getGap(data.sosCount, data.sosScore, T);
+
+        document.getElementById('resultBox').style.display = "block";
+
+        // OSAT 顯示
+        let osatHtml = `<strong>【OSAT】</strong> `;
+        if (osatGap === null) osatHtml += "未輸入數據";
+        else if (osatGap === 0) osatHtml += `<span class="pass">已達標 (81%↑)</span>`;
+        else osatHtml += `還差 <span class="highlight">${osatGap}</span> 份滿分問卷`;
+        document.getElementById('osatResult').innerHTML = osatHtml;
+
+        // SOS 顯示
+        let sosHtml = `<strong>【SOS】</strong> `;
+        if (sosGap === null) sosHtml += "未輸入數據";
+        else if (sosGap === 0) sosHtml += `<span class="pass">已達標 (81%↑)</span>`;
+        else sosHtml += `還差 <span class="highlight">${sosGap}</span> 份滿分問卷`;
+        document.getElementById('sosResult').innerHTML = sosHtml;
     }
 </script>
 
 </body>
-
 </html>
