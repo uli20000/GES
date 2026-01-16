@@ -30,14 +30,19 @@
 
         h2 { text-align: center; color: var(--bg); margin-bottom: 25px; font-weight: 800; font-size: 1.5rem; letter-spacing: -0.5px; }
         
-        .form-group { margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; text-align: center; } /* 標題置中 */
         label { display: block; margin-bottom: 8px; font-weight: 600; color: #64748b; font-size: 13px; text-transform: uppercase; }
         
         select, input { 
             width: 100%; padding: 14px; border: 2px solid #e2e8f0; 
             border-radius: 14px; font-size: 16px; box-sizing: border-box;
             background-color: #fff; transition: all 0.2s ease;
+            text-align: center; /* 這裡讓輸入的文字置中 */
         }
+        
+        /* 針對下拉選單內容置中 (部分瀏覽器支援) */
+        select { text-align-last: center; }
+
         input:focus, select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
 
         .score-grid { 
@@ -51,20 +56,21 @@
             cursor: pointer; transition: all 0.3s;
         }
         button:hover { background: #1d4ed8; transform: translateY(-1px); }
-        button:active { transform: translateY(0); }
 
         .result-box { 
             margin-top: 25px; border-radius: 20px; display: none; 
             background: #ffffff; border: 1px solid #f1f5f9; padding: 20px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            text-align: center; /* 結果區塊文字置中 */
         }
-        .res-title { font-size: 12px; color: #94a3b8; margin-bottom: 12px; text-align: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; }
-        .res-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
+        .res-title { font-size: 12px; color: #94a3b8; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; }
+        .res-row { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 10px 0; }
         .tag { padding: 5px 12px; border-radius: 10px; font-weight: 700; font-size: 12px; letter-spacing: 0.5px; }
         .tag-osat { background: #dbeafe; color: #1e40af; }
         .tag-sos { background: #fef3c7; color: #92400e; }
         .gap-num { color: var(--danger); font-size: 1.1em; font-weight: 800; }
         .pass-text { color: var(--success); font-weight: 700; }
+        .res-divider { width: 100%; height: 1px; background: #f1f5f9; margin: 5px 0; }
     </style>
 </head>
 <body>
@@ -90,11 +96,11 @@
 
     <div class="score-grid">
         <div class="form-group" style="margin-bottom:0">
-            <label>OSAT %</label>
+            <label>Current OSAT %</label>
             <input type="number" id="osatScore" step="0.1" placeholder="0.0">
         </div>
         <div class="form-group" style="margin-bottom:0">
-            <label>SOS %</label>
+            <label>Current SOS %</label>
             <input type="number" id="sosScore" step="0.1" placeholder="0.0">
         </div>
     </div>
@@ -103,10 +109,14 @@
 
     <div id="resultBox" class="result-box">
         <div class="res-title" id="resHeader"></div>
+        
         <div class="res-row">
             <span class="tag tag-osat">OSAT</span>
             <span id="osatVal"></span>
         </div>
+        
+        <div class="res-divider"></div>
+        
         <div class="res-row">
             <span class="tag tag-sos">SOS</span>
             <span id="sosVal"></span>
@@ -115,14 +125,12 @@
 </div>
 
 <script>
-    // 移除了 window.onload 讀取 localStorage 的部分，達到重整即清空的效果
-
     function calculate() {
         const manager = document.getElementById('manager').value;
         const n = parseFloat(document.getElementById('totalCount').value);
         const sOsat = parseFloat(document.getElementById('osatScore').value);
         const sSos = parseFloat(document.getElementById('sosScore').value);
-        const target = 81; // 維持 81% 目標
+        const target = 81;
 
         if (isNaN(n) || n <= 0) {
             alert("請輸入有效的總份數");
